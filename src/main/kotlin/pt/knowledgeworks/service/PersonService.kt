@@ -1,9 +1,11 @@
 package pt.knowledgeworks.service
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.stereotype.Service
+import pt.knowledgeworks.controller.PersonController
 import pt.knowledgeworks.dto.v1.PersonDTO
-import pt.knowledgeworks.dto.v2.PersonDTO as PersonDTOv2
+import pt.knowledgeworks.exceptions.RequiredObjectIsNullException
 import pt.knowledgeworks.exceptions.ResourceNotFoundException
 import pt.knowledgeworks.mappers.ModelMapper
 import pt.knowledgeworks.mappers.custom.PersonMapper
@@ -26,7 +28,12 @@ class PersonService {
         logger.info("Finding all people")
 
         val persons = personRepository.findAll()
-        return ModelMapper.parseListObjects(persons, PersonDTO::class.java)
+        val dtos = ModelMapper.parseListObjects(persons, PersonDTO::class.java)
+        for (person in dtos) {
+            val withSelfRel = linkTo(PersonController::class.java).slash(person.key).withSelfRel()
+            person.add(withSelfRel)
+        }
+        return dtos
     }
 
     fun findById(id: Long): PersonDTO {
@@ -34,31 +41,42 @@ class PersonService {
 
         val person = personRepository.findById(id)
             .orElseThrow { ResourceNotFoundException("No records found with ID: $id") }
-        return ModelMapper.parseObject(person, PersonDTO::class.java)
+        val personDTO: PersonDTO = ModelMapper.parseObject(person, PersonDTO::class.java)
+
+        val withSelfRel = linkTo(PersonController::class.java).slash(personDTO.key).withSelfRel()
+        personDTO.add(withSelfRel)
+
+        return personDTO
     }
 
-    fun createPerson(person: PersonDTO): PersonDTO {
-        logger.info("Creating Person with ID: ${person.id}")
+    fun createPerson(person: PersonDTO?): PersonDTO {
+        if(person == null) throw RequiredObjectIsNullException()
+        logger.info("Creating Person with ID: ${person.key}")
         val entity: Person = ModelMapper.parseObject(person, Person::class.java)
-        return ModelMapper.parseObject(personRepository.save(entity), PersonDTO::class.java)
+        val personDTO: PersonDTO = ModelMapper.parseObject(personRepository.save(entity), PersonDTO::class.java)
+
+        val withSelfRel = linkTo(PersonController::class.java).slash(personDTO.key).withSelfRel()
+        personDTO.add(withSelfRel)
+
+        return personDTO
     }
 
-    fun createPersonV2(person: PersonDTOv2): PersonDTOv2 {
-        logger.info("Creating Person with ID: ${person.id}")
-        val entity: Person = personMapper.mapDtoToEntity(person)
-        return personMapper.mapEntityToDto(personRepository.save(entity))
-    }
-
-    fun updatePerson(person: PersonDTO): PersonDTO {
-        logger.info("Updating Person with ID ${person.id}")
-        val entity = personRepository.findById(person.id)
+    fun updatePerson(person: PersonDTO?): PersonDTO {
+        if(person == null) throw RequiredObjectIsNullException()
+        logger.info("Updating Person with ID ${person.key}")
+        val entity = personRepository.findById(person.key)
             .orElseThrow { ResourceNotFoundException("No records found with ID: $person.id") }
 
         entity.firstName = person.firstName
         entity.lastName = person.lastName
         entity.address = person.address
         entity.gender = person.gender
-        return ModelMapper.parseObject(personRepository.save(entity), PersonDTO::class.java)
+        val personDTO: PersonDTO = ModelMapper.parseObject(personRepository.save(entity), PersonDTO::class.java)
+
+        val withSelfRel = linkTo(PersonController::class.java).slash(personDTO.key).withSelfRel()
+        personDTO.add(withSelfRel)
+
+        return personDTO
     }
 
     fun deletePersonById(id: Long) {
