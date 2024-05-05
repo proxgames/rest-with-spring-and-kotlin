@@ -1,6 +1,6 @@
 package pt.knowledgeworks.dto.v1
 
-data class PersonDTO @JvmOverloads constructor(
+data class PersonDTO @JvmOverloads constructor (
 
 
     var id: Long = 0,
@@ -13,4 +13,4 @@ data class PersonDTO @JvmOverloads constructor(
 
     var gender: String = "",
 
-    )
+)

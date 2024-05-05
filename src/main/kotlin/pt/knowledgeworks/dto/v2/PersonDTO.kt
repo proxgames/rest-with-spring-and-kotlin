@@ -2,8 +2,7 @@ package pt.knowledgeworks.dto.v2
 
 import java.util.*
 
-data class PersonDTO @JvmOverloads constructor(
-
+data class PersonDTO @JvmOverloads constructor (
 
     var id: Long = 0,
 
@@ -17,4 +16,4 @@ data class PersonDTO @JvmOverloads constructor(
 
     var birthDay: Date? = null
 
-    )
+)
