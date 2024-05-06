@@ -2,18 +2,16 @@ package pt.knowledgeworks.controller
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import io.swagger.v3.oas.annotations.media.Content
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.knowledgeworks.dto.v1.PersonDTO
-import pt.knowledgeworks.model.Person
 import pt.knowledgeworks.service.PersonService
 import pt.knowledgeworks.utils.MediaType
-import pt.knowledgeworks.dto.v2.PersonDTO as PersonDTOv2
 
 @RestController
 @RequestMapping("/api/persons/v1")
