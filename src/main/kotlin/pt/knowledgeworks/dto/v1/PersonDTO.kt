@@ -21,7 +21,6 @@ data class PersonDTO @JvmOverloads constructor (
 
     var address: String = "",
 
-    @field:JsonIgnore
     var gender: String = "",
 
 ) : RepresentationModel<PersonDTO>()

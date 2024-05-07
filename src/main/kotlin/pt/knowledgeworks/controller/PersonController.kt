@@ -13,6 +13,7 @@ import pt.knowledgeworks.dto.v1.PersonDTO
 import pt.knowledgeworks.service.PersonService
 import pt.knowledgeworks.utils.MediaType
 
+//@CrossOrigin
 @RestController
 @RequestMapping("/api/persons/v1")
 @Tag(name = "People", description = "Endpoint for managing people")
@@ -44,6 +45,7 @@ class PersonController {
         return personService.findAll()
     }
 
+    @CrossOrigin(origins = ["http://localhost:8080"])
     @Operation(summary = "Finds a person", description = "Returns a person", tags = ["people"], responses =
     [ApiResponse(responseCode = "200", description = "Success", content = [
             Content(schema = Schema(implementation = PersonDTO::class))
@@ -64,6 +66,7 @@ class PersonController {
         return personService.findById(id)
     }
 
+    @CrossOrigin(origins = ["http://localhost:8080","https://matheus.com.br"])
     @Operation(summary = "Adds a new person", description = "Adds a new person", tags = ["people"], responses =
     [ApiResponse(responseCode = "200", description = "Success", content = [
         Content(schema = Schema(implementation = PersonDTO::class))
